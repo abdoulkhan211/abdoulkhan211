@@ -6,9 +6,9 @@
     <title>Contact | AndroMinApp</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="mini.png">
 </head>
 <body>
-    <!-- Barre de navigation -->
     <nav class="glass-nav">
         <div class="nav-container">
             <div class="nav-logo">
@@ -27,7 +27,6 @@
         </div>
     </nav>
 
-    <!-- Contenu principal -->
     <main class="page-content" id="contact">
         <section class="contact-section">
             <div class="contact-hero">
@@ -36,7 +35,7 @@
                     <p>Nous sommes là pour répondre à vos questions</p>
                 </div>
             </div>
-            
+
             <div class="contact-container">
                 <div class="contact-info">
                     <div class="info-card">
@@ -48,7 +47,7 @@
                             <p>Tahoua, Niger</p>
                         </div>
                     </div>
-                    
+
                     <div class="info-card">
                         <div class="info-icon">
                             <i class="fas fa-phone"></i>
@@ -58,7 +57,7 @@
                             <p>+227 77 68 92 77</p>
                         </div>
                     </div>
-                    
+
                     <div class="info-card">
                         <div class="info-icon">
                             <i class="fas fa-envelope"></i>
@@ -68,7 +67,7 @@
                             <p>androminapp@gmail.com</p>
                         </div>
                     </div>
-                    
+
                     <div class="info-card">
                         <div class="info-icon">
                             <i class="fas fa-clock"></i>
@@ -79,7 +78,7 @@
                             <p>Samedi: 9h - 13h</p>
                         </div>
                     </div>
-                    
+
                     <div class="social-links">
                         <h3>Suivez-nous</h3>
                         <div class="social-icons">
@@ -90,46 +89,43 @@
                         </div>
                     </div>
                 </div>
+
+
+<main class="page-content" id="contact">
+    <section class="contact-section">
+        <div class="contact-form">
+            <h2>Envoyez-nous un message</h2>
+            <form id="contactForm" action="https://formsubmit.co/androminapp@gmail.com" method="POST">
+                <input type="hidden" name="_next" value="https://admini-org.vercel.app/merci.html">
+                <input type="hidden" name="_subject" value="Nouveau message depuis le site AndroMinApp">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
                 
-                <div class="contact-form">
-                    <h2>Envoyez-nous un message</h2>
-                    <form id="contactForm" action="https://formsubmit.co/ffabdoulkhan@gmail.com" method="POST">
-                        <!-- Champs cachés pour configuration FormSubmit -->
-                        <input type="hidden" name="_next" value="https://admini-org.vercel.app/merci.html"> <!-- Remplacez par votre URL de remerciement -->
-                        <input type="hidden" name="_subject" value="Nouveau message depuis le site AndroMinApp">
-                        <input type="hidden" name="_captcha" value="false">
-                        <input type="hidden" name="_template" value="table">
-                        
-                        <div class="form-group">
-                            <label for="name">Nom complet</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subject">Sujet</label>
-                            <input type="text" id="subject" name="subject" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Envoyer le message</button>
-                    </form>
+                <div class="form-group">
+                    <label for="name">Nom complet</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
-            </div>
-            
-            <div class="contact-map">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.238284012716!2d5.258678315717725!3d14.710258178973783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDQyJzM2LjkiTiA1wrAxNSczMS4zIkU!5e0!3m2!1sfr!2sne!4v1623256789015!5m2!1sfr!2sne" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </section>
-    </main>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Sujet</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="submitBtn">Envoyer le message</button>
+            </form>
+        </div>
+    </section>
+</main>
 
     <!-- Pied de page -->
     <footer class="glass-footer">
@@ -158,30 +154,32 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2023 Admini. Tous droits réservés.</p>
+            <p>&copy; 2023 AndroMinApp. Tous droits réservés.</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
-    <script>
-        // Script spécifique à la page de contact
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            const submitBtn = this.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-            submitBtn.disabled = true;
-            
-            // Vous pouvez ajouter ici un traitement AJAX si nécessaire
-            // avant la soumission standard du formulaire
-            
-            // Le formulaire se soumettra normalement à Formsubmit
-            // et l'utilisateur sera redirigé vers la page de remerciement
-        });
-        
-        // Animation des cartes d'information
-        const infoCards = document.querySelectorAll('.info-card');
-        infoCards.forEach((card, index) => {
-            card.style.transitionDelay = `${index * 0.1}s`;
-        });
-    </script>
-</body>
-</html>
+<script>
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    contactForm.addEventListener('submit', function(e) {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+        submitBtn.disabled = true;
+    });
+
+    // Vous pouvez ajouter ce code pour mieux comprendre ce qui se passe
+    // C'est un événement de redirection qui indique que le formulaire s'est bien soumis
+    window.addEventListener('load', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('submitted')) {
+            // Afficher un message de succès ici, si nécessaire
+            console.log("Formulaire soumis avec succès ! Redirection en cours...");
+        }
+    });
+
+    // Animation des cartes d'information
+    const infoCards = document.querySelectorAll('.info-card');
+    infoCards.forEach((card, index) => {
+        card.style.transitionDelay = `${index * 0.1}s`;
+    });
+</script>
