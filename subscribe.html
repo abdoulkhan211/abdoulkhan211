@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abonnement | Innovation Technologique Web</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --ios-blue: #007AFF;
+            --ios-gray: #F2F2F7;
+            --ios-dark: #1C1C1E;
+            --ios-card: #FFFFFF;
+            --ios-red: #FF3B30;
+            --ios-green: #34C759;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-gray);
+            margin: 0;
+            padding: 0;
+            color: var(--ios-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .subscription-container {
+            background-color: var(--ios-card);
+            border-radius: 14px;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .subscription-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #007AFF 0%, #34C759 100%);
+        }
+        
+        .subscription-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .subscription-header h2 {
+            color: var(--ios-blue);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subscription-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--ios-dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #E5E5EA;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: var(--ios-gray);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--ios-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .checkbox-group label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .btn-subscribe {
+            width: 100%;
+            background-color: var(--ios-blue);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-subscribe:hover {
+            background-color: #0062CC;
+            transform: translateY(-2px);
+        }
+        
+        .btn-subscribe:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            color: var(--ios-green);
+            font-weight: 500;
+            margin-top: 20px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .error-message {
+            display: none;
+            color: var(--ios-red);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <div class="subscription-container animate__animated animate__fadeInUp">
+        <div class="subscription-header">
+            <h2>Abonnez-vous à notre newsletter</h2>
+            <p>Recevez les dernières actualités et offres spéciales directement dans votre boîte email</p>
+        </div>
+        
+<!-- Remplacez simplement l'action du formulaire par : -->
+<form action="https://formspree.io/f/androminapp@gmail.com" method="POST">
+            <!-- Ajoutez ces champs cachés pour configurer FormSubmit -->
+            <input type="hidden" name="_subject" value="Nouvel abonnement depuis le site">
+            <input type="hidden" name="_autoresponse" value="Merci pour votre abonnement! Vous recevrez bientôt nos dernières actualités.">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next" value="https://admini-org.vercel.app/merci.html"> <!-- Remplacez par votre URL de remerciement -->
+            
+            <div class="form-group">
+                <label for="name">Nom complet</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+                <div class="error-message" id="name-error">Veuillez entrer votre nom</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Adresse email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+                <div class="error-message" id="email-error">Veuillez entrer une adresse email valide</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="interest">Domaine d'intérêt</label>
+                <select id="interest" name="interest" class="form-control">
+                    <option value="developpement-web">Développement Web</option>
+                    <option value="applications-mobiles">Applications Mobiles</option>
+                    <option value="cloud">Solutions Cloud</option>
+                    <option value="tous">Tous nos services</option>
+                </select>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="consent" name="consent" required>
+                <label for="consent">J'accepte de recevoir des emails concernant les actualités et offres spéciales</label>
+            </div>
+            
+            <button type="submit" class="btn-subscribe">S'abonner</button>
+            
+            <div class="success-message" id="successMessage">
+                Merci pour votre abonnement! Vous recevrez bientôt un email de confirmation.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('subscriptionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validation simple
+            let isValid = true;
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const consent = document.getElementById('consent');
+            
+            // Reset erreurs
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.form-control').forEach(el => el.classList.remove('shake'));
+            
+            // Validation nom
+            if (!name.value.trim()) {
+                document.getElementById('name-error').style.display = 'block';
+                name.classList.add('shake');
+                isValid = false;
+            }
+            
+            // Validation email
+            if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                document.getElementById('email-error').style.display = 'block';
+                email.classList.add('shake');
+                isValid = false;
+            }
+            
+            // Validation consentement
+            if (!consent.checked) {
+                consent.parentElement.classList.add('shake');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Soumission réelle du formulaire
+                this.submit();
+                
+                // Afficher message de succès (temporaire en cas de problème avec FormSubmit)
+                document.getElementById('successMessage').style.display = 'block';
+                this.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
