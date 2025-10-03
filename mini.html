@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINI AI - L'Assistant Admini</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* --- STYLES GLOBALES & RESPONSIVE --- */
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #f2f2f7;
+            --card-bg: #ffffff;
+            --border-color: #e5e5ea;
+            --text-color: #000000;
+            --code-bg: #e0e0e0;
+            --gemini-bg: #f5f5f5;
+        }
+
+        /* Réinitialisation de base */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--ios-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0;
+            background: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+        }
+
+        /* --- SIDEBAR DE NAVIGATION --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s ease-in-out;
+            z-index: 25; /* S'assurer qu'elle est au-dessus de l'overlay sur mobile */
+        }
+        .sidebar-header {
+            padding: 0 20px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--ios-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .sidebar-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ios-blue);
+        }
+        .sidebar-menu {
+             flex-grow: 1; /* Permettre au menu de prendre l'espace */
+             overflow-y: auto;
+        }
+        .sidebar-menu a, .sidebar-bottom button {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            border-left: 3px solid transparent;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .sidebar-menu a:hover, .sidebar-bottom button:hover {
+            background-color: var(--ios-bg);
+        }
+        .sidebar-menu a.active {
+            background-color: var(--ios-blue);
+            color: white;
+            border-left-color: var(--ios-blue);
+        }
+        .sidebar-menu a.active i {
+            color: white;
+        }
+        .sidebar-menu i, .sidebar-bottom i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: #8e8e93;
+        }
+        .sidebar-bottom {
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto; 
+        }
+        .sidebar-bottom button i {
+             color: #ff3b30;
+        }
+
+
+        /* --- CONTENU PRINCIPAL --- */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background-color: var(--card-bg);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .menu-toggle {
+            display: none;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--ios-blue);
+            cursor: pointer;
+            z-index: 10;
+        }
+        .main-view {
+            flex-grow: 1;
+            padding: 0; 
+            display: none;
+            overflow-y: auto;
+            background-color: var(--gemini-bg);
+        }
+        .main-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Vues génériques (Auth/Settings/History) */
+        .generic-view-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: left;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .btn-primary { background-color: var(--ios-blue); color: white; }
+        .btn-secondary { background-color: var(--ios-bg); color: var(--ios-blue); border: 1px solid var(--ios-blue); }
+        .message-status { display: none; } /* Caché par défaut */
+
+
+        /* --- VUE CHAT (messages) --- */
+        #chat-window {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            background-color: var(--gemini-bg);
+        }
+        .message-group { max-width: 90%; }
+        .user-group { margin-left: auto; margin-right: 0; align-items: flex-end; }
+        .message-body {
+            padding: 15px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 1rem;
+            word-break: break-word;
+        }
+        .user-group .message-body { background-color: var(--ios-blue); color: white; }
+        .message-group:not(.user-group) .message-body { background-color: var(--card-bg); border: 1px solid var(--border-color); }
+
+        /* Code Block */
+        .message-body pre { background-color: var(--code-bg); padding: 10px; border-radius: 8px; position: relative; }
+        .copy-btn { position: absolute; top: 5px; right: 5px; background: rgba(0, 0, 0, 0.5); color: white; border-radius: 4px; }
+        
+        /* Typing indicator (fluide) */
+        .typing-indicator .message-body {
+            background-color: #e0e7ff; 
+            font-style: italic;
+            color: #555;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        /* --- ZONE D'ENTRÉE --- */
+        #input-area {
+            display: flex;
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            flex-shrink: 0;
+            align-items: center;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: 12px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+        }
+        #send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--ios-blue);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #send-btn:disabled { background-color: #8e8e93; cursor: not-allowed; }
+
+
+        /* --- RESPONSIVE MOBILE (Max-width 768px) --- */
+        @media (max-width: 768px) {
+            body { min-height: 100dvh; }
+            .container { box-shadow: none; height: 100dvh; }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100dvh;
+                transform: translateX(-100%);
+                width: 75%;
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+            }
+            .sidebar.open { transform: translateX(0); }
+
+            .main-content { width: 100%; }
+
+            .menu-toggle { display: block; } /* Afficher le bouton menu */
+
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 15;
+            }
+            .overlay.active { display: block; }
+
+            .message-group, .user-group { max-width: 95%; }
+            .generic-view-content { margin: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="overlay" id="sidebar-overlay"></div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-placeholder">
+                    <img src="miniai.png" alt="Logo MINI AI" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%23007AFF\'/><text x=\'50\' y=\'65\' font-size=\'50\' fill=\'white\' text-anchor=\'middle\' font-family=\'sans-serif\'>AI</text></svg>';" />
+                </div>
+                <h1>MINI AI</h1>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" id="nav-chat" class="active"><i class="fas fa-comment-dots"></i> Conversation</a>
+                <a href="#" id="nav-history"><i class="fas fa-history"></i> Historique</a>
+                <a href="#" id="nav-image"><i class="fas fa-image"></i> Génération d'Image</a>
+                <a href="#" id="nav-settings"><i class="fas fa-cog"></i> Paramètres</a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="main-header" id="current-view-title">
+                <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
+                Conversation
+            </div>
+
+            <div id="auth-terms-view" class="main-view active" style="padding: 20px;">
+                 <div class="generic-view-content text-center" style="max-width: 400px; margin-top: 100px;">
+                    <h2>Bienvenue à MINI AI</h2>
+                    <p>Propulsé par **Admini**, fondé par **Abdourahamane sani Issia** à **Tahoua, Niger**.</p>
+                    <div id="terms-content" style="max-height: 200px; overflow-y: scroll; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; text-align: left; font-size: 0.9rem;">
+                         Bienvenue sur MINI AI, un service de l'équipe **Admini** fondé par **Abdourahamane sani Issia** à **Tahoua, Niger**.
+
+                        En utilisant MINI AI, vous acceptez les conditions suivantes :
+                        1. **Respect :** Vous vous engagez à utiliser l'IA de manière respectueuse et légale.
+                        2. **Données :** Nous stockons vos données d'authentification (email/mot de passe) via Firebase pour sécuriser votre compte.
+                        3. **Responsabilité :** Les réponses de MINI AI sont générées par un modèle d'IA (Gemini) et ne constituent pas un conseil professionnel ou légal. L'équipe Admini n'est pas responsable des conséquences de leur utilisation.
+                        4. **Droits :** Le code et la marque "MINI AI" sont la propriété d'Admini.
+
+                        **Note :** Pour accéder à l'IA, vous devez accepter ces termes et créer un compte Admini.
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="accept-terms">
+                        <label for="accept-terms">J'ai lu et j'accepte les conditions d'utilisation.</label>
+                    </div>
+                    
+                    <div id="auth-form" style="display: none; margin-top: 20px;">
+                        <div class="form-group"><input type="email" id="email-input" placeholder="Adresse Email"></div>
+                        <div class="form-group"><input type="password" id="password-input" placeholder="Mot de Passe"></div>
+                        <div id="auth-status" class="message-status"></div>
+                        <button class="btn btn-primary" id="signup-btn" style="width: 100%;">Inscription</button>
+                        <button class="btn btn-secondary" id="login-btn" style="width: 100%; margin-top: 5px;">Connexion</button>
+                    </div>
+
+                    <button class="btn btn-primary" id="continue-btn" disabled style="width: 100%;">Continuer</button>
+                </div>
+            </div>
+
+            <div id="chat-view" class="main-view">
+                <div id="chat-window">
+                    </div>
+                <div id="input-area">
+                    <input type="text" id="chat-input" placeholder="Parlez à MINI AI (Entrée pour envoyer)..." autofocus>
+                    <button id="send-btn" disabled><i class="fas fa-arrow-up"></i></button>
+                </div>
+            </div>
+
+            <div id="history-view" class="main-view" style="padding: 20px;">
+                <h2 class="text-center">Historique des Conversations</h2>
+                <ul id="history-list">
+                    <p class="text-center loading-text">Aucun historique enregistré localement.</p>
+                </ul>
+            </div>
+            
+            <div id="image-view" class="main-view" style="padding: 20px;">
+                <div class="generic-view-content text-center" style="max-width: 600px; margin: 20px auto;">
+                    <h2>Génération d'Image (Propulsé par Admini)</h2>
+                    <p>Entrez une description pour générer une image via l'API (Simulé dans cette version front-end).</p>
+                    <div class="form-group">
+                        <input type="text" id="image-prompt-input" placeholder="Décrivez l'image à générer (Ex: Un chat cosmonaute dans un champ de dunes)">
+                    </div>
+                    <button class="btn btn-primary" id="generate-image-btn">Générer l'Image</button>
+                    <div id="image-output" style="margin-top: 20px; min-height: 200px; border: 1px dashed var(--border-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; background-color: var(--gemini-bg);">
+                        <p class="loading-text">L'image générée apparaîtra ici.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-view" class="main-view" style="padding: 20px;">
+                <div class="generic-view-content" style="max-width: 600px; margin: 20px auto;">
+                    <h2>Paramètres de MINI AI</h2>
+                    
+                    <h3>Informations Compte Admini</h3>
+                    <p>Statut : <strong id="user-status-display">Déconnecté</strong></p>
+                    <p>Email : <strong id="user-email-display">N/A</strong></p>
+                    
+                    <h3>Nettoyage</h3>
+                    <p>Supprimer toutes les conversations enregistrées dans le navigateur.</p>
+                    <button class="btn btn-secondary" id="clear-history-btn">Effacer l'Historique Local</button>
+                </div>
+            </div>
+
+        </div> </div> <script type="module">
+        // --- Importations Firebase ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXcEC1VX-rA9zDJPiniacYUjbGvSyVL34", // Remplacer par votre clé Firebase réelle
+            authDomain: "adminee-eb9d3.firebaseapp.com",
+            projectId: "adminee-eb9d3",
+            storageBucket: "adminee-eb9d3.firebasestorage.app",
+            messagingSenderId: "471956291131",
+            appId: "1:471956291131:web:3d571bb02642b656f0261e",
+            measurementId: "G-879ZPJLY5T"
+        };
+        const GEMINI_API_KEY = "AIzaSyBotD_DPLCUzIppnlslfrZ9WzvSJVtyrLQ"; // Remplacer par votre clé Gemini réelle
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- REFERENCES DOM & ÉTAT ---
+        const views = {
+            'auth-terms': document.getElementById('auth-terms-view'),
+            'chat': document.getElementById('chat-view'),
+            'history': document.getElementById('history-view'),
+            'image': document.getElementById('image-view'),
+            'settings': document.getElementById('settings-view')
+        };
+        const navLinks = {
+            'chat': document.getElementById('nav-chat'),
+            'history': document.getElementById('nav-history'),
+            'image': document.getElementById('nav-image'),
+            'settings': document.getElementById('nav-settings')
+        };
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const menuToggle = document.getElementById('menu-toggle');
+        const chatWindow = document.getElementById('chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const generateImageBtn = document.getElementById('generate-image-btn');
+        const imageOutput = document.getElementById('image-output');
+        const currentViewTitle = document.getElementById('current-view-title');
+        const acceptTermsCheckbox = document.getElementById('accept-terms');
+        const continueBtn = document.getElementById('continue-btn');
+        const authForm = document.getElementById('auth-form');
+        const emailInput = document.getElementById('email-input');
+        const passwordInput = document.getElementById('password-input');
+        const signupBtn = document.getElementById('signup-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const authStatus = document.getElementById('auth-status');
+        const userStatusDisplay = document.getElementById('user-status-display');
+        const userEmailDisplay = document.getElementById('user-email-display');
+        const historyList = document.getElementById('history-list');
+
+        let currentUser = null;
+        let currentConversation = [];
+        let conversationId = null;
+        let typingIndicatorElement = null;
+
+        // --- GESTION DE VUE (Responsive) ---
+        function showView(viewName) {
+            Object.keys(views).forEach(key => views[key].classList.remove('active'));
+            if (views[viewName]) views[viewName].classList.add('active');
+
+            Object.keys(navLinks).forEach(key => navLinks[key].classList.remove('active'));
+            if (navLinks[viewName]) {
+                 navLinks[viewName].classList.add('active');
+                 currentViewTitle.textContent = navLinks[viewName].textContent.trim();
+            } else if (viewName === 'auth-terms') {
+                 currentViewTitle.textContent = "Authentification Requise";
+            }
+            
+            // Fermer la sidebar sur mobile après la sélection
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+            }
+        }
+        
+        // --- GESTION RESPONSIVE MOBILE ---
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        });
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // --- AUTHENTIFICATION ---
+
+        function showAuthStatus(message, isError = false) {
+            authStatus.textContent = message;
+            authStatus.className = isError ? 'message-status message-error' : 'message-status message-success';
+            authStatus.style.display = 'block';
+            setTimeout(() => authStatus.style.display = 'none', 5000);
+        }
+
+        acceptTermsCheckbox.addEventListener('change', () => {
+            continueBtn.disabled = !acceptTermsCheckbox.checked;
+        });
+
+        continueBtn.addEventListener('click', () => {
+            if (acceptTermsCheckbox.checked) {
+                if (!currentUser) {
+                    continueBtn.style.display = 'none';
+                    authForm.style.display = 'block';
+                } else {
+                    showView('chat');
+                    startNewConversation();
+                }
+            }
+        });
+
+        signupBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            if (!email || password.length < 6) return showAuthStatus("Email et mot de passe (min 6 car.) requis.", true);
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                showAuthStatus("Inscription réussie ! Connexion automatique...", false);
+            } catch (error) { showAuthStatus(`Erreur : ${error.message}`, true); }
+        });
+
+        loginBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            if (!email || !password) return showAuthStatus("Email et mot de passe requis.", true);
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showAuthStatus("Connexion réussie ! Lancement de MINI AI...", false);
+            } catch (error) { showAuthStatus(`Erreur : ${error.message}`, true); }
+        });
+
+        logoutBtn.addEventListener('click', async () => { await signOut(auth); });
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            
+            if (user) {
+                userStatusDisplay.textContent = 'Connecté';
+                userEmailDisplay.textContent = user.email;
+                logoutBtn.style.display = 'block';
+                sendBtn.disabled = false;
+                
+                if (!acceptTermsCheckbox.checked) {
+                    showView('auth-terms');
+                    continueBtn.textContent = 'Accéder au Chat';
+                } else {
+                    showView('chat');
+                    startNewConversation();
+                }
+                
+                authForm.style.display = 'none';
+                continueBtn.style.display = 'none'; 
+                
+            } else {
+                userStatusDisplay.textContent = 'Déconnecté';
+                userEmailDisplay.textContent = 'N/A';
+                logoutBtn.style.display = 'none';
+                sendBtn.disabled = true;
+                
+                showView('auth-terms');
+                continueBtn.textContent = 'Continuer';
+                continueBtn.style.display = 'block'; 
+                authForm.style.display = 'none';
+            }
+        });
+
+        // --- GESTION DES CONVERSATIONS (Local Storage) & AFFICHAGE ---
+
+        function getHistory() { return JSON.parse(localStorage.getItem('mini_ai_history') || '{}'); }
+        
+        function saveConversation(id, conversation) {
+             const history = getHistory();
+             if (conversation.length > 0) {
+                 history[id] = {
+                     title: conversation[0].user.substring(0, 50) + (conversation[0].user.length > 50 ? '...' : ''),
+                     date: new Date().toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }),
+                     messages: conversation
+                 };
+                 localStorage.setItem('mini_ai_history', JSON.stringify(history));
+                 loadHistoryView();
+             }
+        }
+        
+        function startNewConversation(messages = []) {
+             conversationId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+             currentConversation = messages;
+             displayConversation(currentConversation);
+        }
+        
+        function displayConversation(conversation) {
+            chatWindow.innerHTML = '';
+            if (conversation.length === 0) {
+                 addMessage("👋 Bonjour ! Je suis **MINI AI**, votre assistant textuel. Posez-moi une question pour commencer une nouvelle conversation.", 'ai');
+            } else {
+                conversation.forEach(msg => {
+                    addMessage(msg.user, 'user');
+                    addMessage(msg.ai, 'ai');
+                });
+            }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function addMessage(text, sender = 'ai') {
+             const group = document.createElement('div');
+             group.classList.add('message-group', sender === 'user' ? 'user-group' : 'ai-group');
+             const header = document.createElement('div');
+             header.classList.add('message-header');
+             header.textContent = sender === 'user' ? (currentUser ? currentUser.email : 'Utilisateur') : 'MINI AI';
+             group.appendChild(header);
+
+             const body = document.createElement('div');
+             body.classList.add('message-body');
+             let htmlContent = text;
+             
+             // Traitement du code block
+             htmlContent = htmlContent.replace(/```(.*?)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                 const language = lang.trim() || 'code';
+                 const escapedCode = code.trim().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); 
+                 const codeHtml = `<pre><button class="copy-btn" onclick="copyCode(this)">${language.toUpperCase()} <i class="fas fa-copy"></i></button><code>${escapedCode}</code></pre>`;
+                 return codeHtml;
+             });
+             
+             // Formatage des liens et gras
+             htmlContent = htmlContent.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+             htmlContent = htmlContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+             body.innerHTML = htmlContent;
+             group.appendChild(body);
+             chatWindow.appendChild(group);
+             chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Fonction de Copie de Code (Globale)
+        window.copyCode = function(buttonElement) {
+            const pre = buttonElement.closest('pre');
+            const code = pre.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = 'Copié! <i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    buttonElement.innerHTML = originalText;
+                }, 1500);
+            }).catch(err => {
+                console.error('Erreur de copie:', err);
+            });
+        };
+
+        // --- FONCTIONS D'INTERACTION AVANCÉE (Typing, Gemini API) ---
+
+        function showTypingIndicator() {
+            if (typingIndicatorElement) {
+                chatWindow.appendChild(typingIndicatorElement);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+                return;
+            }
+
+            typingIndicatorElement = document.createElement('div');
+            typingIndicatorElement.classList.add('message-group', 'ai-group', 'typing-indicator');
+            // Le contenu affiché pendant l'écriture
+            typingIndicatorElement.innerHTML = '<div class="message-header">MINI AI</div><div class="message-body">MINI AI est en train d\'écrire...</div>';
+            chatWindow.appendChild(typingIndicatorElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function getGeminiResponse(prompt) {
+            if (prompt.toLowerCase().includes("qui t'a créé") || prompt.toLowerCase().includes("ton créateur")) {
+                const creatorText = "J'ai été créée par l'équipe de **Admini**, fondée par **Abdourahamane sani Issia** à **Tahoua, Niger**.";
+                return creatorText; 
+            }
+
+            const URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_API_KEY;
+            
+            try {
+                // Construction du contexte pour la conversation
+                const context = currentConversation.map(msg => [
+                    { role: "user", parts: [{ text: msg.user }] },
+                    { role: "model", parts: [{ text: msg.ai }] }
+                ]).flat().concat({ 
+                    role: "user", parts: [{ text: prompt }] 
+                });
+
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: context })
+                });
+                
+                if (!response.ok) {
+                    const errorJson = await response.json();
+                    console.error("Erreur API Gemini:", errorJson);
+                    return `Désolé, une erreur s'est produite lors de la communication avec l'API Gemini. (Code: ${response.status} - ${errorJson.error.message || 'Vérifiez la clé API.'})`;
+                }
+
+                const json = await response.json();
+                const text = json.candidates?.[0]?.content?.parts?.[0]?.text || "Je n'ai pas pu générer une réponse significative.";
+                return text;
+                
+            } catch (error) {
+                console.error("Erreur de Fetch:", error);
+                return "Une erreur de réseau s'est produite. Impossible de se connecter au service.";
+            }
+        }
+        
+        async function sendMessage() {
+            if (!currentUser) return alert("Veuillez vous connecter pour utiliser MINI AI.");
+
+            const prompt = chatInput.value.trim();
+            if (prompt === "") return;
+
+            addMessage(prompt, 'user');
+            chatInput.value = '';
+            sendBtn.disabled = true; 
+            chatInput.placeholder = "MINI AI réfléchit...";
+            
+            showTypingIndicator();
+
+            const aiResponse = await getGeminiResponse(prompt);
+
+            // Retirer l'indicateur d'écriture
+            if (typingIndicatorElement && chatWindow.contains(typingIndicatorElement)) {
+                 chatWindow.removeChild(typingIndicatorElement);
+            }
+            typingIndicatorElement = null;
+
+            addMessage(aiResponse, 'ai');
+
+            currentConversation.push({ user: prompt, ai: aiResponse });
+            saveConversation(conversationId, currentConversation);
+
+            sendBtn.disabled = false;
+            chatInput.placeholder = "Parlez à MINI AI (Entrée pour envoyer)...";
+            chatInput.focus();
+        }
+
+        // Événements d'envoi
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !sendBtn.disabled) {
+                event.preventDefault(); 
+                sendMessage();
+            }
+        });
+        
+        // --- LOGIQUE GÉNÉRATION D'IMAGE (Simulée) ---
+        generateImageBtn.addEventListener('click', () => {
+             if (!currentUser) return alert("Veuillez vous connecter pour utiliser la Génération d'Image.");
+
+             const imagePrompt = document.getElementById('image-prompt-input').value.trim();
+             if (!imagePrompt) return alert("Veuillez entrer une description pour l'image.");
+
+             imageOutput.innerHTML = `<p class="loading-text">Génération de l'image pour "${imagePrompt}" en cours...</p>`;
+             
+             // Simulation d'un délai
+             setTimeout(() => {
+                 const imageUrl = "https://picsum.photos/400/300?random=" + Math.random();
+                 imageOutput.innerHTML = `<img src="${imageUrl}" alt="Image générée pour ${imagePrompt}" style="max-width: 100%; max-height: 100%; border-radius: 8px;" />`;
+             }, 3000); 
+        });
+
+        // --- GESTION DE LA VUE HISTORIQUE & PARAMÈTRES ---
+        function loadHistoryView() {
+            historyList.innerHTML = '';
+            const history = getHistory();
+            const historyKeys = Object.keys(history).sort((a, b) => b - a);
+
+            if (historyKeys.length === 0) {
+                 historyList.innerHTML = '<p class="text-center loading-text">Aucun historique enregistré localement.</p>';
+                 return;
+            }
+
+            historyKeys.forEach(id => {
+                const item = history[id];
+                const li = document.createElement('li');
+                li.classList.add('history-item');
+                li.innerHTML = `<span class="history-item-title">${item.title}</span><span class="history-item-date">${item.date}</span>`;
+                li.addEventListener('click', () => {
+                    startNewConversation(item.messages);
+                    showView('chat');
+                });
+                historyList.appendChild(li);
+            });
+        }
+        
+        clearHistoryBtn.addEventListener('click', () => {
+             if (confirm("Êtes-vous sûr de vouloir supprimer TOUT l'historique de conversation local ?")) {
+                 localStorage.removeItem('mini_ai_history');
+                 loadHistoryView();
+                 alert("Historique effacé.");
+             }
+        });
+
+        // --- ÉVÉNEMENTS DE NAVIGATION ---
+        document.getElementById('nav-chat').addEventListener('click', (e) => { e.preventDefault(); showView('chat'); });
+        document.getElementById('nav-history').addEventListener('click', (e) => { e.preventDefault(); loadHistoryView(); showView('history'); });
+        document.getElementById('nav-image').addEventListener('click', (e) => { e.preventDefault(); showView('image'); });
+        document.getElementById('nav-settings').addEventListener('click', (e) => { e.preventDefault(); showView('settings'); });
+
+    </script>
+</body>
+</html>
