@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adnimi News - Intégration Aby Business Software</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007AFF;
+            --secondary-color: #5856D6;
+            --background-color: #F2F2F7;
+            --card-color: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --border-radius: 14px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .logo img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 22px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .feature-list {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .timeline-date {
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            background-color: rgba(0, 122, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* Contact Section */
+        .contact-card {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .contact-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #25D366;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 15px;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .contact-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .contact-button i {
+            margin-right: 10px;
+            font-size: 22px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.8s;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .logo-container {
+                justify-content: center;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .card-icon {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bg"></div>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <!-- Placeholder pour le logo Adnimi -->
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Adnimi News</h1>
+                    <p>Intégration Aby Business Software</p>
+                </div>
+            </div>
+            <div class="logo">
+                <!-- Placeholder pour le logo Aby -->
+                <i class="fas fa-store"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h2 class="card-title">Nouvelles Fonctionnalités</h2>
+            </div>
+            <div class="card-content">
+                <p>Adnimi, entreprise mère d'Aby Business Software, est fière d'annoncer l'intégration complète de nouvelles fonctionnalités avancées qui transformeront votre expérience de commande en ligne et de publicité.</p>
+                
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Système de commande unifié avec analyse en temps réel</li>
+                    <li><i class="fas fa-check-circle"></i> Plateforme publicitaire intelligente avec ciblage avancé</li>
+                    <li><i class="fas fa-check-circle"></i> Tableau de bord analytique complet pour les deux plateformes</li>
+                    <li><i class="fas fa-check-circle"></i> Intégration des données entre Adnimi et Aby Business Software</li>
+                    <li><i class="fas fa-check-circle"></i> Système de notification push personnalisable</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card delay-1">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h2 class="card-title">Intégration Complète</h2>
+            </div>
+            <div class="card-content">
+                <p>L'intégration entre Adnimi et Aby Business Software permet désormais une gestion unifiée de vos activités commerciales et publicitaires.</p>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">Phase 1 - Synchronisation</div>
+                        <div class="timeline-content">Synchronisation des données clients et des inventaires entre les plateformes</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Phase 2 - Analytics Unifiés</div>
+                        <div class="timeline-content">Tableau de bord unique pour analyser les performances commerciales et publicitaires</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">Phase 3 - Automatisation</div>
+                        <div class="timeline-content">Campagnes publicitaires automatiques basées sur les tendances de vente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card delay-2">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2 class="card-title">Aby Business Software</h2>
+            </div>
+            <div class="card-content">
+                <p>Aby Business Software est une plateforme complète de commande en ligne et de publicité conçue pour les entreprises modernes. Grâce à son intégration avec Adnimi, elle offre désormais :</p>
+                
+                <ul class="feature-list">
+                    <li><i class="fas fa-shopping-cart"></i> Système de commande en ligne sécurisé et intuitif</li>
+                    <li><i class="fas fa-bullhorn"></i> Outils publicitaires avancés avec ciblage géographique et démographique</li>
+                    <li><i class="fas fa-chart-pie"></i> Analytics détaillés sur les performances des campagnes publicitaires</li>
+                    <li><i class="fas fa-mobile-alt"></i> Interface responsive optimisée pour tous les appareils</li>
+                    <li><i class="fas fa-robot"></i> Automatisation des processus de vente et de marketing</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card delay-3">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h2 class="card-title">Adnimi - Entreprise Mère</h2>
+            </div>
+            <div class="card-content">
+                <p>Adnimi est l'entreprise mère qui chapeaute Aby Business Software et d'autres initiatives technologiques. Notre mission est de fournir des solutions innovantes qui transforment la façon dont les entreprises opèrent dans l'ère numérique.</p>
+                
+                <p>Grâce à cette intégration, Adnimi renforce son écosystème technologique et offre à ses clients une expérience unifiée et sans précédent dans le domaine du e-commerce et de la publicité en ligne.</p>
+            </div>
+        </div>
+
+        <div class="card contact-card delay-4">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h2 class="card-title">Contactez-Nous</h2>
+            </div>
+            <div class="card-content">
+                <p>Pour plus d'informations sur ces nouvelles fonctionnalités ou pour discuter de vos besoins spécifiques, n'hésitez pas à nous contacter via WhatsApp.</p>
+                
+                <a href="https://wa.me/22777680277" class="contact-button">
+                    <i class="fab fa-whatsapp"></i> +227 77 68 02 77
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Adnimi - Tous droits réservés</p>
+    </footer>
+
+    <script>
+        // Animation supplémentaire au scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Effet de parallaxe sur le header
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const header = document.querySelector('header');
+                header.style.transform = `translateY(${scrolled * 0.5}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
